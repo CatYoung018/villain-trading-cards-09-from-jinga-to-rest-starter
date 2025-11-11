@@ -43,7 +43,15 @@ def delete():
 def get_villains():
    villains=Villain.query.all()
    data = []
-   return
+   for villain in villains:
+      data.append({
+        "name": villain.name,
+        "description": villain.description,
+        "interests": villain.interests,
+        "url": villain.url,
+        "date_added": villain.date_added
+      })
+   return jsonify(data)
 
 @app.route("/api/villains/add", methods=["POST"])
 def add_villain():
@@ -75,7 +83,7 @@ def add_villain():
     new_villain = Villain(name=name,description=description, interests=interests, url=url)
     db.session.add(new_villain)
     db.session.commit()
-    return 
+    return jsonify({"status" : "success"})
   
 @app.route("/api/villains/delete", methods=["POST"])
 def delete_villain():
@@ -84,7 +92,7 @@ def delete_villain():
   if villain:
     db.session.delete(villain)
     db.session.commit()
-    return
+    return jsonify({"status" : "success"})
   else:
     return jsonify({"errors": ["Oops! A villain with that name doesn't exist!"]})
 
@@ -96,6 +104,9 @@ def get_endpoints():
         "/api/villains/add": "POST - Adds a single villain to the database"
     }
     return jsonify(endpoints)
+
+
+# app.run(host='0.0.0.0', port=8080)
 
 # Run the flask server
 if __name__ == "__main__":
